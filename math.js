@@ -2,11 +2,26 @@ var math = {
 	E:2.718281828459045,
 	Pi:3.141592653589793,
 	arithMean:function(number1,number2){
-		return ((number1+number2)/2)
+		return ((number1+number2)/2);
 	},
 	geoMean:function(number1,number2){
-		return (this.sqrt(number1*number2))
-	}
+		return (this.sqrt(number1*number2));
+	},
+	geoArithMean:function(number1,number2,specs){
+		return arithGeoMean(number1,number2,specs)
+	},
+	arithGeoMean:function(number1,number2,specs){
+		var arithBound=[this.arithMean(number1,number2)];
+		var geoBound=[this.geoMean(number1,number2)];
+		if(typeof specs== 'undefined'){
+			specs = 10;
+		}
+		for(meanInteger=0;meanInteger<specs;meanInteger++){
+			arithBound[meanInteger+1]=this.arithMean(arithBound[meanInteger],geoBound[meanInteger]);
+			geoBound[meanInteger+1]=this.geoMean(arithBound[meanInteger],geoBound[meanInteger]);
+		}
+		return geoBound[arithBound.length-1]
+	},
 	synthetic:function(system,number){
 		var top=system;var mid=[];var bot=[];
 		mid[0]=0;
@@ -72,14 +87,33 @@ var math = {
 		var upperBound = [number];
 		var averageBounds;
 		if(typeof specs=='undefined'){
-			specs=this.log(number,2)+10;
+			specs=number+10;
 		}
 		for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
-			averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/2;
-			lowerBound[lowerBound.length]=averageBounds
-			upperBound[upperBound.length]=number/lowerBound[sqrtInteger+1]
+			averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/3;
+			lowerBound[sqrtInteger+1]=averageBounds;
+			upperBound[sqrtInteger+1]=number/lowerBound[sqrtInteger+1];
 		}
 		return averageBounds;
+	},
+	roots:function(number,root){ // (f(x+h)-f(x))/h
+		var start = 1;
+		var deriv = function (input,hValue) {
+			var top
+			top = given(input+hValue)-given(input)
+			return (top/hValue)
+		}
+		var given = function (input) {
+			var givenReturn = 1
+			for(givenRootsInteger=0;givenRootsInteger<root;givenRootsInteger++){
+				givenReturn*= input
+			}
+			return givenReturn
+		}
+		for(rootsInteger=0;rootsInteger<root;rootsInteger++){
+			start = start - given(start) / deriv(start,rootsInteger)
+		}
+		return start
 	},
 	// Currently only works with clean numbers
 	// Will work on even numbers
@@ -88,21 +122,6 @@ var math = {
 	},
 	// It's broken
 	ln:function(number,specs){
-		if(number<=0){
-			return -Infinity;
-		}
-		if(number>0){
-			if(typeof specs=='undefined'){
-				specs=(number+10);
-			}
-			var upperBound = [1]
-			var lowerBound = [4/number]
-			for(lnInteger=0;lnInteger<specs;lnInteger++){
-
-			}
-		}
-		else{
-			return 'undefined'
-		}
+		
 	},
 }
