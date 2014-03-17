@@ -1,49 +1,108 @@
 var math = {
-	synthetic:function(s,n){
-		var top =  s;var mid = [];var bot = [];
+	E:2.718281828459045,
+	Pi:3.141592653589793,
+	arithMean:function(number1,number2){
+		return ((number1+number2)/2)
+	},
+	geoMean:function(number1,number2){
+		return (this.sqrt(number1*number2))
+	}
+	synthetic:function(system,number){
+		var top=system;var mid=[];var bot=[];
 		mid[0]=0;
-		for(i=0;i<s.length;i++){
-			bot[i]=(top[i]+mid[i]);
-			mid[i+1]=(bot[i]*n);
+		for(syntheticInteger=0;syntheticInteger<system.length;syntheticInteger++){
+			bot[syntheticInteger]=(top[syntheticInteger]+mid[syntheticInteger]);
+			mid[syntheticInteger+1]=(bot[syntheticInteger]*number);
 		}
 		var remainder=bot[s.length-1]
 		return remainder;
 	},
-	factor:function(n){
+	factor:function(number){
 		var factored=new Array();
 		var temp;
-		if(n>=0){
-			for(i=0;i<n/2+1;i++){
-				temp=(n/i);
+		if(number>=0){
+			for(factorInteger=0;factorInteger<number/2+1;factorInteger++){
+				temp=(number/factorInteger);
 				if(temp%1==0){
-					factored[factored.length]=i;
+					factored[factored.length]=factorInteger;
 				}
 			}
 		}
-		if(n<0){
-			for(i=0;i<this.abs(n);i++){
-				temp=(this.abs(n)/i);
+		if(number<0){
+			for(factorInteger=0;factorInteger<this.abs(number);factorInteger++){
+				temp=(this.abs(number)/factorInteger);
 				if(temp%1==0){
-					factored[factored.length]=-i
+					factored[factored.length]=-factorInteger
 				}
 			}
 		}
-		factored[factored.length]=n;
+		factored[factored.lenumbergth]=number;
 		return factored;
 	},
-	abs:function(n){
-		if(n<0){
-			return (n*-1);
+	abs:function(number){
+		if(number<0){
+			return (number*-1);
 		}else{
-			return n;
+			return number;
 		}
 	},
-	floor:function(n){
-		var end=(n-(n%1))
-		return end
+	floor:function(number){
+		var finalEnd=(number-(number%1))
+		return finalEnd
 	},
-	ceiling:function(n){
-		var end=((n-(n%1))+1)
-		return end
-	}
+	ceiling:function(number){
+		var finalEnd=((number-(number%1))+1)
+		return finalEnd
+	},
+	// timesRun must be a positive integer. FOR NOW
+	power:function(number,timesRun){
+		var finalEnd=1;
+		for(powerInteger=0;powerInteger<this.abs(timesRun);powerInteger++){
+			finalEnd*=number
+		}
+		if(timesRun<0){
+			finalEnd=(1/finalEnd);
+		}
+		return finalEnd;
+	},
+	// Has optional specs. You don't really need it. 
+	// I should make it this.log(number) as soon as I figure out this.log
+	sqrt:function(number,specs){
+		var lowerBound = [1];
+		var upperBound = [number];
+		var averageBounds;
+		if(typeof specs=='undefined'){
+			specs=this.log(number,2)+10;
+		}
+		for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
+			averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/2;
+			lowerBound[lowerBound.length]=averageBounds
+			upperBound[upperBound.length]=number/lowerBound[sqrtInteger+1]
+		}
+		return averageBounds;
+	},
+	// Currently only works with clean numbers
+	// Will work on even numbers
+	log:function(number,base){
+
+	},
+	// It's broken
+	ln:function(number,specs){
+		if(number<=0){
+			return -Infinity;
+		}
+		if(number>0){
+			if(typeof specs=='undefined'){
+				specs=(number+10);
+			}
+			var upperBound = [1]
+			var lowerBound = [4/number]
+			for(lnInteger=0;lnInteger<specs;lnInteger++){
+
+			}
+		}
+		else{
+			return 'undefined'
+		}
+	},
 }
