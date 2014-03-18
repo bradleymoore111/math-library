@@ -126,4 +126,10 @@ var math = {
 	ln:function(number,specs){
 		
 	},
+	rrt:function(first,last){
+		var lastFactors = math.factor(last);
+		var firstFactor = math.factor(first);
+		
+		//for(i=0; i<lastFactors) Don't use "i"
+	}
 }
