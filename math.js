@@ -201,5 +201,7 @@ var math = {
 				runs++;
 			}
 		}
+		
+		return totalFactors;
 	},
 };
