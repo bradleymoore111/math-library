@@ -91,13 +91,13 @@ var math = {
 		}
 		return maxTempArray
 	},
-	// timesRun must be a positive integer. FOR NOW
-	power:function(number,timesRun){
+	// exponent must be a positive integer. FOR NOW
+	power:function(number,exponent){
 		var finalEnd=1;
-		for(powerInteger=0;powerInteger<math.abs(timesRun);powerInteger++){
+		for(powerInteger=0;powerInteger<math.abs(exponent);powerInteger++){
 			finalEnd*=number
 		}
-		if(timesRun<0){
+		if(exponent<0){
 			finalEnd=(1/finalEnd);
 		}
 		return finalEnd;
@@ -116,24 +116,28 @@ var math = {
 		}
 		return averageBounds;
 	},
-	roots:function(number,root){ // (f(x+h)-f(x))/h
-		var start = 1;
-		var deriv = function (input,hValue) {
-			var top
-			top = given(input+hValue)-given(input)
-			return (top/hValue)
+	rad:function(number,index){
+		//this method determines the nth root, if n is a positive integer (fixed if power works, nonintegers work)
+		
+		if(number<0) {
+			return "cannot exist";
 		}
-		var given = function (input) {
-			var givenReturn = 1
-			for(givenRootsInteger=0;givenRootsInteger<root;givenRootsInteger++){
-				givenReturn*= input
-			}
-			return givenReturn
+		
+		var final = 2; //this is just our most current answer
+		var guess = 100; //this number starts off the process
+		var time = new Date();
+		var runTime = 0;
+		var startTime = time.getTime();
+		
+		while((final !== guess) && (runTime < 20000)) {
+			guess = final;
+			final = guess - (math.power(guess,index) - number) / (index * math.power(guess,index - 1));
+			var time2 = new Date();
+			var endTime = time2.getTime();
+			runTime = endTime - startTime;
 		}
-		for(rootsInteger=0;rootsInteger<root;rootsInteger++){
-			start = start - given(start) / deriv(start,rootsInteger)
-		}
-		return start
+		
+		return final;
 	},
 	// Currently only works with clean numbers
 	// Will work on even numbers
@@ -148,7 +152,7 @@ var math = {
 		var lastFactors =math.factor(last);
 		var firstFactors=math.factor(first);
 		var totalFactors=[];
-		//for(i=0; i<lastFactors) Don't use "i"
+		
 		for(rrtFirstInteger=0;rrtFirstInteger<firstFactors.length;rrtFirstInteger++){
 			for(rrtSecndInteger=0;rrtSecndInteger<lastFactors.length;rrtSecndInteger++){
 				totalFactors[totalFactors.length]=math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
@@ -157,4 +161,4 @@ var math = {
 			}
 		}
 	},
-}
+};
