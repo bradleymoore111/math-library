@@ -90,15 +90,11 @@ var math = {
 		var lowerBound = [1];
 		var upperBound = [number];
 		var averageBounds;
-		/*if(typeof specs=='undefined'){
-			specs=number+10;
-		}*/
-		var sqrtInteger=0;
-		while((lowerBound[lowerBound.length-1]!==upperBound[upperBound.length-1])&&(lowerBound[lowerBound.length-1]-upperBound[upperBound.length-1]>math.abs(.000000000001))){
+		var specs = number+10
+		for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
 			averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/2;
 			lowerBound[sqrtInteger+1]=averageBounds;
 			upperBound[sqrtInteger+1]=number/lowerBound[sqrtInteger+1];
-			sqrtInteger+=1;
 		}
 		return averageBounds;
 	},
