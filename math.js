@@ -73,6 +73,24 @@ var math = {
 		var finalEnd=((number-(number%1))+1)
 		return finalEnd
 	},
+	max:function(array){ // Shit works
+		var tempArray=array
+		var maxTempArray=tempArray
+		var time=array.length
+		for(maxInteger=0;maxInteger<time;maxInteger++){
+			console.log("Being run the " + maxInteger + " time.")
+			console.log("The current maxTempArray is "+maxTempArray)
+			if(maxTempArray[0]>=maxTempArray[1]){
+
+				console.log(maxTempArray.splice(1,1));
+			}
+			if(maxTempArray[0]< maxTempArray[1]){
+				console.log(maxTempArray.splice(0,1));
+			}
+
+		}
+		return maxTempArray
+	},
 	// timesRun must be a positive integer. FOR NOW
 	power:function(number,timesRun){
 		var finalEnd=1;
@@ -127,9 +145,16 @@ var math = {
 		
 	},
 	rrt:function(first,last){
-		var lastFactors = math.factor(last);
-		var firstFactor = math.factor(first);
-		
+		var lastFactors =math.factor(last);
+		var firstFactors=math.factor(first);
+		var totalFactors=[];
 		//for(i=0; i<lastFactors) Don't use "i"
-	}
+		for(rrtFirstInteger=0;rrtFirstInteger<firstFactors.length;rrtFirstInteger++){
+			for(rrtSecndInteger=0;rrtSecndInteger<lastFactors.length;rrtSecndInteger++){
+				totalFactors[totalFactors.length]=math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
+				totalFactors[totalFactors.length]=-math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
+				// You could add a checker to see if this number already exists
+			}
+		}
+	},
 }
