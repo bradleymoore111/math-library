@@ -1,26 +1,30 @@
 var math = {
-	E:2.718281828459045,
+	E:function(){
+		var bottomSegment
+		var total
+
+	},
 	Pi:3.141592653589793,
+	LN2:0.6931471805599453,
 	arithMean:function(number1,number2){
 		return ((number1+number2)/2);
 	},
 	geoMean:function(number1,number2){
-		return (this.sqrt(number1*number2));
+		return (math.sqrt(number1*number2));
 	},
-	geoArithMean:function(number1,number2,specs){
-		return arithGeoMean(number1,number2,specs)
+	geoArithMean:function(number1,number2){
+		return arithGeoMean(number1,number2)
 	},
-	arithGeoMean:function(number1,number2,specs){
-		var arithBound=[this.arithMean(number1,number2)];
-		var geoBound=[this.geoMean(number1,number2)];
-		if(typeof specs== 'undefined'){
-			specs = 10;
+	arithGeoMean:function(number1,number2){
+		var arithBound=[math.arithMean(number1,number2)];
+		var geoBound=[math.geoMean(number1,number2)];
+		var meanInteger=0
+		while(arithBound[arithBound.length-1]!==geoBound[geoBound.length-1]){
+			arithBound[meanInteger+1]=math.arithMean(arithBound[meanInteger],geoBound[meanInteger]);
+			geoBound[meanInteger+1]=math.geoMean(arithBound[meanInteger],geoBound[meanInteger]);
+			meanInteger+=1;
 		}
-		for(meanInteger=0;meanInteger<specs;meanInteger++){
-			arithBound[meanInteger+1]=this.arithMean(arithBound[meanInteger],geoBound[meanInteger]);
-			geoBound[meanInteger+1]=this.geoMean(arithBound[meanInteger],geoBound[meanInteger]);
-		}
-		return geoBound[arithBound.length-1]
+		return geoBound[geoBound.length-1]
 	},
 	synthetic:function(system,number){
 		var top=system;var mid=[];var bot=[];
@@ -29,7 +33,7 @@ var math = {
 			bot[syntheticInteger]=(top[syntheticInteger]+mid[syntheticInteger]);
 			mid[syntheticInteger+1]=(bot[syntheticInteger]*number);
 		}
-		var remainder=bot[s.length-1]
+		var remainder=bot[system.length-1]
 		return remainder;
 	},
 	factor:function(number){
@@ -44,8 +48,8 @@ var math = {
 			}
 		}
 		if(number<0){
-			for(factorInteger=0;factorInteger<this.abs(number);factorInteger++){
-				temp=(this.abs(number)/factorInteger);
+			for(factorInteger=0;factorInteger<math.abs(number);factorInteger++){
+				temp=(math.abs(number)/factorInteger);
 				if(temp%1==0){
 					factored[factored.length]=-factorInteger
 				}
@@ -72,7 +76,7 @@ var math = {
 	// timesRun must be a positive integer. FOR NOW
 	power:function(number,timesRun){
 		var finalEnd=1;
-		for(powerInteger=0;powerInteger<this.abs(timesRun);powerInteger++){
+		for(powerInteger=0;powerInteger<math.abs(timesRun);powerInteger++){
 			finalEnd*=number
 		}
 		if(timesRun<0){
@@ -81,18 +85,20 @@ var math = {
 		return finalEnd;
 	},
 	// Has optional specs. You don't really need it. 
-	// I should make it this.log(number) as soon as I figure out this.log
-	sqrt:function(number,specs){
+	// I should make it math.log(number) as soon as I figure out math.log
+	sqrt:function(number){ //sqrt:function(number,specs){
 		var lowerBound = [1];
 		var upperBound = [number];
 		var averageBounds;
-		if(typeof specs=='undefined'){
+		/*if(typeof specs=='undefined'){
 			specs=number+10;
-		}
-		for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
-			averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/3;
+		}*/
+		var sqrtInteger=0;
+		while((lowerBound[lowerBound.length-1]!==upperBound[upperBound.length-1])&&(lowerBound[lowerBound.length-1]-upperBound[upperBound.length-1]>math.abs(.000000000001))){
+			averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/2;
 			lowerBound[sqrtInteger+1]=averageBounds;
 			upperBound[sqrtInteger+1]=number/lowerBound[sqrtInteger+1];
+			sqrtInteger+=1;
 		}
 		return averageBounds;
 	},
