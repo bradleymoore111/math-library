@@ -157,7 +157,48 @@ var math = {
 			for(rrtSecndInteger=0;rrtSecndInteger<lastFactors.length;rrtSecndInteger++){
 				totalFactors[totalFactors.length]=math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
 				totalFactors[totalFactors.length]=-math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
-				// You could add a checker to see if this number already exists
+			}
+		}
+		
+		//sorts the array for ease of use. Bubble Sort
+
+		var sort = function(array) {
+		    
+		    var length = array.length-1; 
+		    
+		    for(i=0;i<array.length;i++) {
+		        
+		        var sorted = true;
+		        
+		        for(j=0;j<length;j++) {
+		            if(array[j]>array[j+1]) {
+		                array.splice(j,2,array[j+1],array[j]);
+		                sorted = false;
+		            }
+		        }
+		        
+		        if(sorted) {
+		            return array;
+		        }
+		        
+		        length--;
+		        
+		    }
+		    
+		    return array;
+		};
+		
+		totalFactors = sort(totalFactors);
+		
+		//Deletes all duplicates
+		
+		var runs = 0;
+		
+		while(runs<totalFactors.length-2) {
+			if(totalFactors[runs]===totalFactors[runs+1]) {
+				totalFactors.splice(runs,1);
+			} else {
+				runs++;
 			}
 		}
 	},
