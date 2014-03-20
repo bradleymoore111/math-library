@@ -120,16 +120,50 @@ var math = {
 		}
 		return maxTempArray
 	},
+	pow:function(number,exponent){
+		if(exponent%1==0){
+			return math.intPow(number,exponent);
+		}
+
+		var expandedExponent = exponent;
+		var timesToTen = 1;
+
+		var afterDecimal = (exponent%1);
+		/*
+			Interestingly, here modulo is broken.
+			Javascript is oddly trying to fix a problem that doesn't exist
+			In this case, the module 1 of 1.555, 1.555%1 = 0.55499999999999999
+			2.465%1 = 0.4649999999999999999
+			And probably other cases that don't end in a five
+			Fuck
+			1.298%1 = 0.2980000000000000000001
+			Why
+			
+		*/
+		var aftrDecStrng = afterDecimal.toString()
+		var howTenTimes = aftrDecStrng.split(".")
+		var howManyTimes = howTenTimes[1].length
+		for (powInt=0;powInt<howManyTimes;powInt++) {
+			expandedExponent *= 10;
+			timesToTen *= 10;
+		}
+		var newNumber = math.intPow(number,expandedExponent);
+		return math.intRad(newNumber,timesToTen)
+
+	},
 	// exponent must be a positive integer. FOR NOW
-	power:function(number,exponent){
+	intPow:function(number,exponent){
 		var finalEnd=1;
+		if(exponent==0){
+			return 1;
+		} 
 		for(powerInteger=0;powerInteger<math.abs(exponent);powerInteger++){
-			finalEnd*=number
+			finalEnd*=number;
 		}
 		if(exponent<0){
-			finalEnd=(1/finalEnd);
+			return (1/finalEnd);
 		}
-		return finalEnd;
+		return finalEnd;		
 	},
 	// Has optional specs. You don't really need it. 
 	// I should make it math.log(number) as soon as I figure out math.log
@@ -164,20 +198,33 @@ var math = {
 		}
 		
 		var final = 2; //this is just our most current answer
-		var guess = 100; //this number starts off the process
+		var guess = 5; //this number starts off the process
 		var time = new Date();
 		var runTime = 0;
 		var startTime = time.getTime();
 		
 		while((final !== guess) && (runTime < 20000)) {
 			guess = final;
-			final = guess - (math.power(guess,index) - number) / (index * math.power(guess,index - 1));
+			final = guess - (math.pow(guess,index) - number) / (index * math.pow(guess,index - 1));
 			var time2 = new Date();
 			var endTime = time2.getTime();
 			runTime = endTime - startTime;
 		}
 
 		return final;
+	},
+	// Doesn't work with massive numbers :(
+	intRad:function(number1,root){
+		var initArrayGuess = [1];
+		var inside = function (number){
+			var leftInsideIntRad = (root-1)*number;
+			var rightInsideIntRad = number1/math.pow(number,root-1);
+			return (leftInsideIntRad+rightInsideIntRad)/root;
+		}
+		for(i=0;i<1000000;i++){
+			initArrayGuess[i+1]=inside(initArrayGuess[i]);
+		}
+		return initArrayGuess[initArrayGuess.length-1];
 	},
 	// Currently only works with clean numbers
 	// Will work on even numbers
@@ -262,6 +309,7 @@ var math = {
 		// First sends it twice, once for positive once for negative
 		// Has a problem with sending the same number in 2 different ways
 		// Eg. Sending -2/1 and -4/2
+		// Is effectively rational roots. What ever
 		for(y=0;y<=beginFactors.length;y++){
 			for(n=0;n<=endFactors.length;n++){
 				toSend=endFactors[n]/beginFactors[y];
@@ -283,3 +331,20 @@ var math = {
 		console.log(zeros)
 	},
 };
+
+
+/*
+	pow function
+		intPow
+		nIntPow
+			intPow
+			intRad
+				intPow
+	rad function
+		intRad
+			intPow
+		nIntRad
+			intRad
+				intPow
+			intPow
+*/
