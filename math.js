@@ -6,6 +6,35 @@ var math = {
 	},
 	Pi:3.141592653589793,
 	LN2:0.6931471805599453,
+	toDecimal:function(givenArray){
+		givenArray[2] = givenArray[0]/givenArray[1];
+		return givenArray[2];
+	},
+	toFraction:function(givenDecimal){
+		var number1=givenDecimal;
+		var timesTen=0;
+		while(number1%1!==0){
+			number1*=10;
+			timesTen++;
+		}
+
+		console.log(number1);
+		console.log(timesTen);
+	},
+	simplify:function(givenArray){
+		var topFactors = math.factor(givenArray[0]);
+		var botFactors = math.factor(givenArray[1]);
+		var toReturn = givenArray;
+		for(topInteger=0;topInteger<topFactors.length;topInteger++){
+			for(botInteger=0;botInteger<topFactors.length;botInteger++){
+				if(topFactors[topInteger]==botFactors[botInteger]){
+					toReturn[0]/=topFactors[topInteger];
+					toReturn[1]/=topFactors[botInteger];
+				}
+			}
+		}
+		return toReturn;
+	},
 	arithMean:function(number1,number2){
 		return ((number1+number2)/2);
 	},
@@ -55,7 +84,7 @@ var math = {
 				}
 			}
 		}
-		factored[factored.lenumbergth]=number;
+		factored[factored.length]=number;
 		return factored;
 	},
 	abs:function(number){
@@ -105,16 +134,27 @@ var math = {
 	// Has optional specs. You don't really need it. 
 	// I should make it math.log(number) as soon as I figure out math.log
 	sqrt:function(number){ //sqrt:function(number,specs){
-		var lowerBound = [1];
-		var upperBound = [number];
-		var averageBounds;
-		var specs = number+10
-		for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
-			averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/2;
-			lowerBound[sqrtInteger+1]=averageBounds;
-			upperBound[sqrtInteger+1]=number/lowerBound[sqrtInteger+1];
+		if(number<0){
+			return -Infinity;
 		}
-		return averageBounds;
+		if(number==0){
+			return 0;
+		}
+		if(number>0){
+			var lowerBound = [1];
+			var upperBound = [number];
+			var averageBounds;
+			var specs = number+1000
+			for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
+				averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/2;
+				lowerBound[sqrtInteger+1]=averageBounds;
+				upperBound[sqrtInteger+1]=number/lowerBound[sqrtInteger+1];
+			}
+			return averageBounds;
+		}
+		else{
+			return NaN
+		}
 	},
 	rad:function(number,index){
 		//this method determines the nth root, if n is a positive integer (fixed if power works, nonintegers work)
@@ -136,7 +176,7 @@ var math = {
 			var endTime = time2.getTime();
 			runTime = endTime - startTime;
 		}
-		
+
 		return final;
 	},
 	// Currently only works with clean numbers
@@ -159,49 +199,87 @@ var math = {
 				totalFactors[totalFactors.length]=-math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
 			}
 		}
-		
-		//sorts the array for ease of use. Bubble Sort
 
-		var sort = function(array) {
-		    
-		    var length = array.length-1; 
-		    
-		    for(i=0;i<array.length;i++) {
-		        
-		        var sorted = true;
-		        
-		        for(j=0;j<length;j++) {
-		            if(array[j]>array[j+1]) {
-		                array.splice(j,2,array[j+1],array[j]);
-		                sorted = false;
-		            }
-		        }
-		        
-		        if(sorted) {
-		            return array;
-		        }
-		        
-		        length--;
-		        
-		    }
-		    
-		    return array;
-		};
-		
 		totalFactors = sort(totalFactors);
-		
+	
 		//Deletes all duplicates
 		
 		var runs = 0;
 		
-		while(runs<totalFactors.length-2) {
-			if(totalFactors[runs]===totalFactors[runs+1]) {
+		while(runs<totalFactors.length-2){
+			if(totalFactors[runs]===totalFactors[runs+1]){
 				totalFactors.splice(runs,1);
 			} else {
 				runs++;
 			}
-		}
+		}		
 		
 		return totalFactors;
+	},
+	sort:function(array){
+		    
+	    var length = array.length-1; 
+	    
+	    for(sortInteger=0;sortInteger<array.length;sortInteger++) {
+	        
+	        var sorted = true;
+	        
+	        for(sortJnteger=0;sortJnteger<length;sortJnteger++) {
+	            if(array[sortJnteger]>array[sortJnteger+1]) {
+	                array.splice(sortJnteger,2,array[sortJneteger+1],array[sortJnteger]);
+	                sorted = false;
+	            }
+	        }
+	        
+	        if(sorted) {
+	            return array;
+	        }
+	        
+	        length--;
+	        
+		}
+	    
+	    return array;
+	},
+	solvePolynomials:function(a){
+		var zeros = [];
+		// Defining length for later for loops
+		var length = a.length;
+		// Redefines length for end zeros, as if factoring x out of x^3+4x, since there's a zero it removes it
+		var origZeros = 0;
+		for(i=0;i<length;i++){
+			if(a[length-1]==0){
+				origZeros++;
+				legnth-=1;
+				zeros[zeros.length]=0;
+			}
+		}	
+		var beginFactors = math.factor(a[0])
+		var endFactors = math.factor(a[length-1])
+		// Checking the factors with synthetic division
+		var toSend
+		var tempLength
+		// First sends it twice, once for positive once for negative
+		// Has a problem with sending the same number in 2 different ways
+		// Eg. Sending -2/1 and -4/2
+		for(y=0;y<=beginFactors.length;y++){
+			for(n=0;n<=endFactors.length;n++){
+				toSend=endFactors[n]/beginFactors[y];
+				if(0==math.synthetic(a,toSend)){
+					tempLength=zeros.length;
+					zeros[tempLength]=toSend;
+				};
+			};
+		}
+		for(y=0;y<beginFactors.length;y++){
+			for(n=0;n<endFactors.length;n++){
+				toSend=-1*endFactors[n]/beginFactors[y];
+				if(0==math.synthetic(a,toSend)){
+					tempLength=zeros.length;
+					zeros[tempLength]=toSend;
+				};
+			};
+		}
+		console.log(zeros)
 	},
 };
