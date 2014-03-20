@@ -138,7 +138,6 @@ var math = {
 			Fuck
 			1.298%1 = 0.2980000000000000000001
 			Why
-			
 		*/
 		var aftrDecStrng = afterDecimal.toString()
 		var howTenTimes = aftrDecStrng.split(".")
