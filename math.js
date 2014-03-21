@@ -1,9 +1,4 @@
 var math = {
-	E:function(){
-		var bottomSegment
-		var total
-
-	},
 	Pi:3.141592653589793,
 	LN2:0.6931471805599453,
 	toDecimal:function(givenArray){
@@ -44,6 +39,7 @@ var math = {
 	geoArithMean:function(number1,number2){
 		return arithGeoMean(number1,number2)
 	},
+	// I have to use an array for this, realistically. I could get away with not, but it's not needed
 	arithGeoMean:function(number1,number2){
 		var arithBound=[math.arithMean(number1,number2)];
 		var geoBound=[math.geoMean(number1,number2)];
@@ -65,6 +61,7 @@ var math = {
 		var remainder=bot[system.length-1]
 		return remainder;
 	},
+	// I should redo this to make more sense, but for now it works
 	factor:function(number){
 		var factored=new Array();
 		var temp;
@@ -90,9 +87,7 @@ var math = {
 	abs:function(number){
 		if(number<0){
 			return (number*-1);
-		}else{
-			return number;
-		}
+		}return number;
 	},
 	floor:function(number){
 		var finalEnd=(number-(number%1))
@@ -102,52 +97,32 @@ var math = {
 		var finalEnd=((number-(number%1))+1)
 		return finalEnd
 	},
-	max:function(array){ // Shit works
-		var tempArray=array
-		var maxTempArray=tempArray
-		var time=array.length
-		for(maxInteger=0;maxInteger<time;maxInteger++){
-			console.log("Being run the " + maxInteger + " time.")
-			console.log("The current maxTempArray is "+maxTempArray)
-			if(maxTempArray[0]>=maxTempArray[1]){
-
-				console.log(maxTempArray.splice(1,1));
-			}
-			if(maxTempArray[0]< maxTempArray[1]){
-				console.log(maxTempArray.splice(0,1));
-			}
-
-		}
-		return maxTempArray
+	max:function(array){
 	},
 	pow:function(number,exponent){
 		if(exponent%1==0){
 			return math.intPow(number,exponent);
 		}
 
-		var expandedExponent = exponent;
-		var timesToTen = 1;
-
-		var afterDecimal = (exponent%1);
-		/*
-			Interestingly, here modulo is broken.
-			Javascript is oddly trying to fix a problem that doesn't exist
-			In this case, the module 1 of 1.555, 1.555%1 = 0.55499999999999999
-			2.465%1 = 0.4649999999999999999
-			And probably other cases that don't end in a five
-			Fuck
-			1.298%1 = 0.2980000000000000000001
-			Why
-		*/
-		var aftrDecStrng = afterDecimal.toString()
-		var howTenTimes = aftrDecStrng.split(".")
-		var howManyTimes = howTenTimes[1].length
+		var expandedExponent = exponent; // remaking the variable so we can modify it later
+		var timesToTen = 1; // Setting the base for the bottom of the fraction
+		var aftrDecStrng = exponent.toString() // Changing the after decimal to a string
+		var splitAfterDec = aftrDecStrng.split(".") // Spliting up the string in order to acquire the part after the decimal
+		var howManyTimes = splitAfterDec[1].length  // the second part is the after decimal, so number of times to run by ten
 		for (powInt=0;powInt<howManyTimes;powInt++) {
 			expandedExponent *= 10;
 			timesToTen *= 10;
 		}
-		var newNumber = math.intPow(number,expandedExponent);
-		return math.intRad(newNumber,timesToTen)
+		var newNumber = math.intPow(number,expandedExponent); // Creating the number using the expanded exponent, thought not in fractional form yet
+		/*
+			A current issue we have is that some exponents can get too big.
+			For example, finding 4^1555 returns infinity, which can't have the 4^1/1000 
+			So, if we could simplify instead of 4^1555/1000 which is math.intRad(math.pow(4,1555),1000)
+			Instead if we could simplify the fraction 1555/1000 to 311/200, that would save work
+			And it could be run.
+			I'll put this issue on github
+		*/
+		return math.intRad(newNumber,timesToTen); // Returning the dexpanded expanded number, effectively a number to an exponent. GG
 
 	},
 	// exponent must be a positive integer. FOR NOW
@@ -166,7 +141,16 @@ var math = {
 	},
 	// Has optional specs. You don't really need it. 
 	// I should make it math.log(number) as soon as I figure out math.log
-	sqrt:function(number){ //sqrt:function(number,specs){
+
+	//sqrt:function(number,specs){
+	/*
+		Condensed version of Newton's Method, or the nth root alorithm for where n=2
+		The nth algorithm 1/n ( (n-1)x_k + A/X_k^n-1 )
+		Condensed, 1/2 ( (2-1)x_k + A/x_k^2-1)
+		1/2 (x_k + a/x_k)
+		That's all this does
+	*/
+	sqrt:function(number){ 
 		if(number<0){
 			return -Infinity;
 		}
@@ -174,14 +158,14 @@ var math = {
 			return 0;
 		}
 		if(number>0){
-			var lowerBound = [1];
-			var upperBound = [number];
+			var lowerBound = 1;
+			var upperBound = number;
 			var averageBounds;
 			var specs = number+1000
 			for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
-				averageBounds=(lowerBound[sqrtInteger]+upperBound[sqrtInteger])/2;
-				lowerBound[sqrtInteger+1]=averageBounds;
-				upperBound[sqrtInteger+1]=number/lowerBound[sqrtInteger+1];
+				averageBounds=(lowerBound+upperBound)/2;
+				lowerBound=averageBounds;
+				upperBound=number/lowerBound;
 			}
 			return averageBounds;
 		}
@@ -214,16 +198,34 @@ var math = {
 	},
 	// Doesn't work with massive numbers :(
 	intRad:function(number1,root){
-		var initArrayGuess = [1];
-		var inside = function (number){
+		var initGuess = [1];
+		/* 	
+			A function to return the formula found on http://en.wikipedia.org/wiki/Nth_root_algorithm
+			Left is the inside left of the bracket
+			Right is the inside right of the bracket
+			the final return of it all being over root is the outside fraction 1/n simplified
+			(n-1)x_k = leftInsideIntRad
+			A / x_k ^ (n-1) = rightInsideIntRad
+			n = root
+			x_k = number, or the current number
+			x_k+1 = the returned number, or the next number in the series
+			A = number1, or the original number to be rooted
+		*/	
+		var inside = function (number){ /* 	A function to return the formula found on http://en.wikipedia.org/wiki/Nth_root_algorithm
+											Left is the inside left of the bracket
+											Right is the inside right of the bracket
+											the final return of it all being over root is the outside fraction 1/n simplified
+
+											(n-1)x_k = leftInsideIntRad
+										*/	
 			var leftInsideIntRad = (root-1)*number;
 			var rightInsideIntRad = number1/math.pow(number,root-1);
 			return (leftInsideIntRad+rightInsideIntRad)/root;
 		}
-		for(i=0;i<1000000;i++){
-			initArrayGuess[i+1]=inside(initArrayGuess[i]);
+		for(i=0;i<100000;i++){
+			initGuess=inside(initGuess);
 		}
-		return initArrayGuess[initArrayGuess.length-1];
+		return initGuess;
 	},
 	// Currently only works with clean numbers
 	// Will work on even numbers
@@ -252,7 +254,7 @@ var math = {
 		
 		var runs = 0;
 		
-		while(runs<totalFactors.length-2){
+		while(runs<totalFactors.length-2){ // Why isn't this a for loop?
 			if(totalFactors[runs]===totalFactors[runs+1]){
 				totalFactors.splice(runs,1);
 			} else {
@@ -262,7 +264,7 @@ var math = {
 		
 		return totalFactors;
 	},
-	sort:function(array){
+	sort:function(array){ // Delete this, unless you have a reason not to.
 		    
 	    var length = array.length-1; 
 	    
@@ -328,22 +330,7 @@ var math = {
 			};
 		}
 		console.log(zeros)
+		// Would be a good idea to add a repeat checker, but again
+		// What ever
 	},
 };
-
-
-/*
-	pow function
-		intPow
-		nIntPow
-			intPow
-			intRad
-				intPow
-	rad function
-		intRad
-			intPow
-		nIntRad
-			intRad
-				intPow
-			intPow
-*/
