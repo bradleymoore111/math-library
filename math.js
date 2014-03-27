@@ -19,16 +19,21 @@ var math = {
 	simplify:function(givenArray){
 		var topFactors = math.factor(givenArray[0]);
 		var botFactors = math.factor(givenArray[1]);
-		var toReturn = givenArray;
+		var returnArray= givenArray;
 		for(topInteger=0;topInteger<topFactors.length;topInteger++){
-			for(botInteger=0;botInteger<topFactors.length;botInteger++){
-				if(topFactors[topInteger]==botFactors[botInteger]){
-					toReturn[0]/=topFactors[topInteger];
-					toReturn[1]/=topFactors[botInteger];
+			var topFactor = topFactors[topInteger];
+			for(botInteger=0;botInteger<botFactors.length;botInteger++){
+				var botFactor = botFactors[botInteger];
+				if((topFactors[topInteger]==botFactors[botInteger])&&(topFactors[topInteger]!=1)){
+					returnArray[0]/=topFactors[topInteger];
+					returnArray[1]/=botFactors[botInteger];
+
+					topFactors[topInteger] =1;
+					botFactors[botInteger] =1;
 				}
 			}
 		}
-		return toReturn;
+		return returnArray;
 	},
 	arithMean:function(number1,number2){
 		return ((number1+number2)/2);
@@ -50,6 +55,18 @@ var math = {
 			meanInteger+=1;
 		}
 		return geoBound[geoBound.length-1]
+	},
+	factorial:function(number){
+		if(number%1==0){
+			return math.intFactorial(number);
+		}
+	},
+	intFactorial:function(number){
+		var factorialSum = 1;
+		for(factorialInteger=0;factorialInteger<number;factorialInteger++){
+			factorialSum*= number-factorialInteger;
+		}
+		return factorialSum
 	},
 	synthetic:function(system,number){
 		var top=system;var mid=[];var bot=[];
@@ -79,6 +96,19 @@ var math = {
 				if(temp%1==0){
 					factored[factored.length]=-factorInteger
 				}
+			}
+		}
+		factored[factored.length]=number;
+		return factored;
+	},
+	// Almost works
+	primeFactor:function(number){
+		var factored=new Array();
+		var temp;
+		for(primeFactorInteger=2;primeFactorInteger<number;primeFactorInteger++){
+			if(number%primeFactorInteger==0){
+				factored[factored.length]=primeFactorInteger;
+				number/=primeFactorInteger;
 			}
 		}
 		factored[factored.length]=number;
@@ -120,10 +150,9 @@ var math = {
 			So, if we could simplify instead of 4^1555/1000 which is math.intRad(math.pow(4,1555),1000)
 			Instead if we could simplify the fraction 1555/1000 to 311/200, that would save work
 			And it could be run.
-			I'll put this issue on github
+			I'll put this issue on githubi
 		*/
 		return math.intRad(newNumber,timesToTen); // Returning the dexpanded expanded number, effectively a number to an exponent. GG
-
 	},
 	// exponent must be a positive integer. FOR NOW
 	intPow:function(number,exponent){
@@ -179,6 +208,9 @@ var math = {
 		if(number<0) {
 			return "cannot exist";
 		}
+		if(number%1==0){
+			return math.intRad(number,index);
+		}
 		
 		var final = 2; //this is just our most current answer
 		var guess = 5; //this number starts off the process
@@ -197,8 +229,6 @@ var math = {
 		return final;
 	},
 	// Doesn't work with massive numbers :(
-	intRad:function(number1,root){
-		var initGuess = [1];
 		/* 	
 			A function to return the formula found on http://en.wikipedia.org/wiki/Nth_root_algorithm
 			Left is the inside left of the bracket
@@ -211,6 +241,8 @@ var math = {
 			x_k+1 = the returned number, or the next number in the series
 			A = number1, or the original number to be rooted
 		*/	
+	intRad:function(number1,root){
+		var initGuess = [1];
 		var inside = function (number){ /* 	A function to return the formula found on http://en.wikipedia.org/wiki/Nth_root_algorithm
 											Left is the inside left of the bracket
 											Right is the inside right of the bracket
