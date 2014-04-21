@@ -1,6 +1,10 @@
 var math = {
+	PI:3.141592653589793,
 	Pi:3.141592653589793,
+	pi:3.141592653589793,
 	LN2:0.6931471805599453,
+	Ln2:0.6931471805599453,
+	ln2:0.6931471805599453,
 	toDecimal:function(givenArray){
 		givenArray[2] = givenArray[0]/givenArray[1];
 		return givenArray[2];
@@ -330,7 +334,7 @@ var math = {
 		for(i=0;i<length;i++){
 			if(a[length-1]==0){
 				origZeros++;
-				legnth-=1;
+				length-=1;
 				zeros[zeros.length]=0;
 			}
 		}	
