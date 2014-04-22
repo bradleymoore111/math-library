@@ -150,7 +150,10 @@ var math = {
 		var newEnd=[];
 		for(powInt=0;powInt<onlyAfterDec.length;powInt++){
 			var newNum = math.intPow(number,onlyAfterDec[powInt])
-			newEnd[powInt]=math.intRad(newNum,math.intPow(10,powInt+1))
+			for(idkInteger=0;idkInteger<(powInt+1);idkInteger++){
+				newEnd[powInt]=math.intRad(newNum,10)
+				newNum = newEnd[powInt]
+			}
 		}
 
 		for(powInt=0;powInt<newEnd.length;powInt++){
@@ -207,30 +210,13 @@ var math = {
 		}
 	},
 	rad:function(number,index){
-		//this method determines the nth root, if n is a positive integer (fixed if power works, nonintegers work)
-		
 		if(number<0) {
 			return "cannot exist";
 		}
-		if(number%1==0){
+		if(index%1==0){
 			return math.intRad(number,index);
 		}
-		
-		var final = 2; //this is just our most current answer
-		var guess = 5; //this number starts off the process
-		var time = new Date();
-		var runTime = 0;
-		var startTime = time.getTime();
-		
-		while((final !== guess) && (runTime < 20000)) {
-			guess = final;
-			final = guess - (math.pow(guess,index) - number) / (index * math.pow(guess,index - 1));
-			var time2 = new Date();
-			var endTime = time2.getTime();
-			runTime = endTime - startTime;
-		}
-
-		return final;
+		return math.pow(number,1/index)
 	},
 	// Doesn't work with massive numbers :(
 		/* 	
@@ -277,13 +263,42 @@ var math = {
 		
 	},
 	// Accepts it in degrees
-	sin:function(numberRadian){
-		var number = (numberRadian*math.PI)/180
-		var numberFinal = ( number - (math.intPow(number,3)/6) + (math.intPow(number,5)/120) - (math.intPow(number,7)/5040) + (math.intPow(number,9)/362880) - (math.intPow(number,11)/39916800) )
- 		return numberFinal
+	sin:function(numberDegrees){
+		var number  = numberDegrees*math.PI/180;
+		var checker = [];checker[0]=0;checker[1]=1;checker[2]=2;
+		var looper  = [];looper[0]=0;looper[1]=1;looper[2]=2;looper[3]=3;
+		var top;
+		var bot;
+		var total=0;
+		var negative;
+		var sinInt=1;
+		while(((!(checker[0]==checker[1]))&&(!(checker[1]==checker[2])))&&((!(looper[0]==looper[1])) && (!(looper[1]==looper[2])) && (!(looper[2]==looper[3])))) {
+			if(sinInt%2==1){
+				top=math.pow(number,sinInt);
+				bot=math.factorial(sinInt);
+				if(sinInt%4==1){
+					negative=1
+				}
+				if(sinInt%4==3){
+					negative=-1
+				}
+				total+= negative*top/bot
+				checker[sinInt%3]=total;
+				looper[sinInt%4]=total;
+			}
+			sinInt+=1;
+		}
+		return checker[0]
 	},
-	cosine:function(number){
+	cos:function(number){
 
+	},
+	factorial:function(number){
+		var factorialEnd = 1;
+		for(factorialInteger=number;factorialInteger>0;factorialInteger--){
+			factorialEnd*= factorialInteger;
+		}
+		return factorialEnd;
 	},
 	rrt:function(first,last){
 		var lastFactors =math.factor(last);
