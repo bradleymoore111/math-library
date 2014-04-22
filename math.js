@@ -140,23 +140,23 @@ var math = {
 
 		var expandedExponent = exponent; // remaking the variable so we can modify it later
 		var timesToTen = 1; // Setting the base for the bottom of the fraction
-		var aftrDecStrng = exponent.toString() // Changing the after decimal to a string
-		var splitAfterDec = aftrDecStrng.split(".") // Spliting up the string in order to acquire the part after the decimal
-		var howManyTimes = splitAfterDec[1].length  // the second part is the after decimal, so number of times to run by ten
-		for (powInt=0;powInt<howManyTimes;powInt++) {
-			expandedExponent *= 10;
-			timesToTen *= 10;
+		var aftrDecStrng = exponent.toString(); // Changing the after decimal to a string
+		var splitAfterDec = aftrDecStrng.split("."); // Spliting up the string in order to acquire the part after the decimal
+		var onlyAfterDec = splitAfterDec[1].split("");
+		for(powInt=0;powInt<onlyAfterDec.length;powInt++){
+			onlyAfterDec[powInt]=parseInt(onlyAfterDec[powInt]);
 		}
-		var newNumber = math.intPow(number,expandedExponent); // Creating the number using the expanded exponent, thought not in fractional form yet
-		/*
-			A current issue we have is that some exponents can get too big.
-			For example, finding 4^1555 returns infinity, which can't have the 4^1/1000 
-			So, if we could simplify instead of 4^1555/1000 which is math.intRad(math.pow(4,1555),1000)
-			Instead if we could simplify the fraction 1555/1000 to 311/200, that would save work
-			And it could be run.
-			I'll put this issue on githubi
-		*/
-		return math.intRad(newNumber,timesToTen); // Returning the dexpanded expanded number, effectively a number to an exponent. GG
+		var beforeDecInit = math.intPow(number,parseInt(splitAfterDec[0]))
+		var newEnd=[];
+		for(powInt=0;powInt<onlyAfterDec.length;powInt++){
+			var newNum = math.intPow(number,onlyAfterDec[powInt])
+			newEnd[powInt]=math.intRad(newNum,math.intPow(10,powInt+1))
+		}
+
+		for(powInt=0;powInt<newEnd.length;powInt++){
+			beforeDecInit*=newEnd[powInt]
+		}
+		return beforeDecInit;
 	},
 	// exponent must be a positive integer. FOR NOW
 	intPow:function(number,exponent){
@@ -246,20 +246,24 @@ var math = {
 			A = number1, or the original number to be rooted
 		*/	
 	intRad:function(number1,root){
-		var initGuess = [1];
-		var inside = function (number){ /* 	A function to return the formula found on http://en.wikipedia.org/wiki/Nth_root_algorithm
-											Left is the inside left of the bracket
-											Right is the inside right of the bracket
-											the final return of it all being over root is the outside fraction 1/n simplified
-
-											(n-1)x_k = leftInsideIntRad
-										*/	
+		var initGuess = 1;
+		var inside = function (number){
 			var leftInsideIntRad = (root-1)*number;
-			var rightInsideIntRad = number1/math.pow(number,root-1);
+			var rightInsideIntRad = number1/math.intPow(number,root-1);
 			return (leftInsideIntRad+rightInsideIntRad)/root;
 		}
-		for(i=0;i<100000;i++){
+		var checker= [];
+		var looper = [];
+		checker[0] = 1;
+		checker[1] = inside(1);
+		looper[0]=1;
+		looper[1]=inside(1);
+		var intRadInteger=0;
+		while((!(checker[0]==checker[1]))&&(!(looper[1]==looper[0]))) {
+			intRadInteger+=1;
 			initGuess=inside(initGuess);
+			checker[intRadInteger%2]=initGuess
+			looper[intRadInteger%3] =initGuess
 		}
 		return initGuess;
 	},
@@ -271,6 +275,15 @@ var math = {
 	// It's broken
 	ln:function(number,specs){
 		
+	},
+	// Accepts it in degrees
+	sin:function(numberRadian){
+		var number = (numberRadian*math.PI)/180
+		var numberFinal = ( number - (math.intPow(number,3)/6) + (math.intPow(number,5)/120) - (math.intPow(number,7)/5040) + (math.intPow(number,9)/362880) - (math.intPow(number,11)/39916800) )
+ 		return numberFinal
+	},
+	cosine:function(number){
+
 	},
 	rrt:function(first,last){
 		var lastFactors =math.factor(last);
@@ -365,7 +378,7 @@ var math = {
 				};
 			};
 		}
-		console.log(zeros)
+		return zeros
 		// Would be a good idea to add a repeat checker, but again
 		// What ever
 	},
