@@ -134,6 +134,9 @@ var math = {
 	max:function(array){
 	},
 	pow:function(number,exponent){
+		if(exponent==0){
+			return 1
+		}
 		if(exponent%1==0){
 			return math.intPow(number,exponent);
 		}
@@ -264,7 +267,27 @@ var math = {
 	},
 	// Accepts it in degrees
 	sin:function(numberDegrees){
-		var number  = numberDegrees*math.PI/180;
+		// Conditions
+		var number  = numberDegrees%360;
+		if(number==0)	{return 0}
+		if(number==30)	{return math.intRad(1,2)/2}
+		if(number==45)	{return math.intRad(2,2)/2}
+		if(number==60)	{return math.intRad(3,2)/2}
+		if(number==90)	{return 1}
+		if(number==120)	{return math.intRad(3,2)/2}
+		if(number==135)	{return math.intRad(2,2)/2}
+		if(number==150)	{return math.intRad(1,2)/2}
+		if(number==180)	{return 0}
+		if(number==210)	{return -math.intRad(1,2)/2}
+		if(number==225)	{return -math.intRad(2,2)/2}
+		if(number==240)	{return -math.intRad(3,2)/2}
+		if(number==270)	{return -1}
+		if(number==300)	{return -math.intRad(3,2)/2}
+		if(number==315)	{return -math.intRad(2,2)/2}
+		if(number==330)	{return -math.intRad(1,2)/2}
+
+
+			number  = numberDegrees*math.PI/180;
 		var checker = [];checker[0]=0;checker[1]=1;checker[2]=2;
 		var looper  = [];looper[0]=0;looper[1]=1;looper[2]=2;looper[3]=3;
 		var top;
@@ -290,8 +313,74 @@ var math = {
 		}
 		return checker[0]
 	},
-	cos:function(number){
+	sine:function(number){
+		return math.sin(number);
+	},
+	cos:function(numberDegrees){
+		// Conditions
+		/*var number = numberDegrees%360;
+		if(number==0)	{return 0}
+		if(number==30)	{return 1/2}
+		if(number==90)	{return 1}
+		if(number==150)	{return 1/2}
+		if(number==180)	{return 0}
+		if(number==210)	{return -1/2}
+		if(number==270)	{return -1}
+		if(number==330)	{return -1/2}*/
 
+
+		var	number  = numberDegrees*math.PI/180;
+		var checker = [];checker[0]=0;checker[1]=1;checker[2]=2;
+		var looper  = [];looper[0]=0;looper[1]=1;looper[2]=2;looper[3]=3;
+		var top;
+		var bot;
+		var total=0;
+		var negative;
+		var sinInt=0;
+		while(((!(checker[0]==checker[1]))&&(!(checker[1]==checker[2])))&&((!(looper[0]==looper[1])) && (!(looper[1]==looper[2])) && (!(looper[2]==looper[3])))) {
+			if(sinInt%2==0){
+				top=math.pow(number,sinInt);
+				bot=math.factorial(sinInt);
+				if(sinInt%4==0){
+					negative=1
+				}
+				if(sinInt%4==2){
+					negative=-1
+				}
+				total+= negative*top/bot
+				checker[sinInt%3]=total;
+				looper[sinInt%4]=total;
+			}
+			sinInt+=1;
+		}
+		return checker[0]
+	},
+	cosine:function(number){
+		return math.cos(number);
+	},
+	tan:function(number){
+		return math.sin(number)/math.cos(number);
+	},
+	tangent:function(number){
+		return math.tan(number);
+	},
+	csc:function(number){
+		return 1/math.sin(number);
+	},
+	cosecant:function(number){
+		return math.csc(number);
+	},
+	sec:function(number){
+		return 1/math.cos(number);
+	},
+	secant:function(number){
+		return math.sec(number);
+	},
+	cot:function(number){
+		return 1/math.tan(number);
+	},
+	cotangent:function(number){
+		return math.cot(number);
 	},
 	factorial:function(number){
 		var factorialEnd = 1;
