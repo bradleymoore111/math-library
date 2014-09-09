@@ -5,6 +5,8 @@ var math = {
 	LN2:0.6931471805599453,
 	Ln2:0.6931471805599453,
 	ln2:0.6931471805599453,
+	e:2.718281828459045,
+	E:2.718281828459045,
 	toDecimal:function(givenArray){
 		givenArray[2] = givenArray[0]/givenArray[1];
 		return givenArray[2];
@@ -19,6 +21,20 @@ var math = {
 
 		console.log(number1);
 		console.log(timesTen);
+	},
+	VtoXY:function(magnitude,angle){
+		var toRe= [];
+		toRe[0] = this.cos(angle)*magnitude;
+		toRe[1] = this.sin(angle)*magnitude;
+		return toRe;
+	},
+	VtoMA:function(x,y){
+		var toRe= [];
+		toRe[0] = this.sqrt(this.pow(x,2)+this.pow(y,2));
+		toRe[1] = (Math.atan(y/x)*180)/this.pi;
+		if(x<0){toRe[1]+=180;}
+		if(toRe[1]<0){toRe[1]+=360}
+		return toRe;
 	},
 	simplify:function(givenArray){
 		var topFactors = math.factor(givenArray[0]);
@@ -39,23 +55,31 @@ var math = {
 		}
 		return returnArray;
 	},
-	arithMean:function(number1,number2){
-		return ((number1+number2)/2);
+	arithMean:function(array){
+		var total=0;
+		for(arithMeanInt=0;arithMeanInt<array.length;arithMeanInt++){
+			total+=array[arithMeanInt];
+		}
+		return total/array.length;
 	},
-	geoMean:function(number1,number2){
-		return (math.sqrt(number1*number2));
+	geoMean:function(array){
+		var total=1;
+		for(geoMeanInt=0;geoMeanInt<array.length;geoMeanInt++){
+			total*=array[geoMeanInt];
+		}
+		return math.rad(total,array.length);
 	},
 	geoArithMean:function(number1,number2){
 		return arithGeoMean(number1,number2)
 	},
 	// I have to use an array for this, realistically. I could get away with not, but it's not needed
 	arithGeoMean:function(number1,number2){
-		var arithBound=[math.arithMean(number1,number2)];
-		var geoBound=[math.geoMean(number1,number2)];
+		var arithBound=[math.arithMean([number1,number2])];
+		var geoBound=[math.geoMean([number1,number2])];
 		var meanInteger=0
 		while(arithBound[arithBound.length-1]!==geoBound[geoBound.length-1]){
-			arithBound[meanInteger+1]=math.arithMean(arithBound[meanInteger],geoBound[meanInteger]);
-			geoBound[meanInteger+1]=math.geoMean(arithBound[meanInteger],geoBound[meanInteger]);
+			arithBound[meanInteger+1]=math.arithMean([arithBound[meanInteger],geoBound[meanInteger]]);
+			geoBound[meanInteger+1]=math.geoMean([arithBound[meanInteger],geoBound[meanInteger]]);
 			meanInteger+=1;
 		}
 		return geoBound[geoBound.length-1]
@@ -200,11 +224,20 @@ var math = {
 			var lowerBound = 1;
 			var upperBound = number;
 			var averageBounds;
-			var specs = number+1000
-			for(sqrtInteger=0;sqrtInteger<specs;sqrtInteger++){
+			var sqrtInteger = 0;
+
+			var looper = [lowerBound,upperBound];
+			var checker= [lowerBound,upperBound];
+
+			while ((!(looper[0]==looper[1]))||(!(checker[0]==checker[1]))) {
 				averageBounds=(lowerBound+upperBound)/2;
 				lowerBound=averageBounds;
 				upperBound=number/lowerBound;
+
+				looper[sqrtInteger%2] = averageBounds;
+				checker[sqrtInteger%2]= upperBound;
+
+				sqrtInteger++;
 			}
 			return averageBounds;
 		}
@@ -259,11 +292,43 @@ var math = {
 	// Currently only works with clean numbers
 	// Will work on even numbers
 	log:function(number,base){
-
+		if(isNaN(base)){
+			base = 10;
+		}
+		// Otherwise running ln of small numbers is slow
+		if(number<1){
+			return -1*math.ln(1/number)/math.ln(base)
+		}
+		return math.ln(number)/math.ln(base);
 	},
 	// It's broken
-	ln:function(number,specs){
-		
+	ln:function(number){
+		if(number<1){
+			return -1*math.logNatural(1/number)
+		}
+		return math.logNatural(number)
+	},
+	logNatural:function(numberBegin){
+		// I would use math.rad(number,2), except I need a clean number at the end
+		var number=numberBegin;
+		var totZer=0;
+		while(number>=2){
+			totZer++;
+			number/=2;
+		}
+		// Taylor series time!
+		var	lnInt = 1;
+		var total = 0;
+		var loops = [1,0]
+		while(!(loops[1]==loops[0])){
+			total+= (((lnInt+1)%2==0)?1:-1)*math.pow((number-1),lnInt)/lnInt
+			loops[lnInt%2]=total;
+			lnInt+=1;
+		}
+		for(ff=0;ff<totZer;ff++){
+			total+=math.LN2;
+		}
+		return total;
 	},
 	// Accepts it in degrees
 	sin:function(numberDegrees){
@@ -318,7 +383,9 @@ var math = {
 	},
 	cos:function(numberDegrees){
 		// Conditions
-		/*var number = numberDegrees%360;
+		return math.sin(numberDegrees+90);
+		/*
+		var number = numberDegrees%360;
 		if(number==0)	{return 0}
 		if(number==30)	{return 1/2}
 		if(number==90)	{return 1}
@@ -326,7 +393,7 @@ var math = {
 		if(number==180)	{return 0}
 		if(number==210)	{return -1/2}
 		if(number==270)	{return -1}
-		if(number==330)	{return -1/2}*/
+		if(number==330)	{return -1/2}
 
 
 		var	number  = numberDegrees*math.PI/180;
@@ -353,9 +420,9 @@ var math = {
 			}
 			sinInt+=1;
 		}
-		return checker[0]
+		return checker[0]*/
 	},
-	cosine:function(number){
+	calcine:function(number){
 		return math.cos(number);
 	},
 	tan:function(number){
