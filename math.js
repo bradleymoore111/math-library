@@ -1,4 +1,4 @@
-var math = {
+var m = {
 	PI:3.141592653589793,
 	Pi:3.141592653589793,
 	pi:3.141592653589793,
@@ -37,19 +37,19 @@ var math = {
 		return toRe;
 	},
 	simplify:function(givenArray){
-		var topFactors = math.factor(givenArray[0]);
-		var botFactors = math.factor(givenArray[1]);
+		var topFactors = m.factor(givenArray[0]);
+		var botFactors = m.factor(givenArray[1]);
 		var returnArray= givenArray;
-		for(topInteger=0;topInteger<topFactors.length;topInteger++){
-			var topFactor = topFactors[topInteger];
-			for(botInteger=0;botInteger<botFactors.length;botInteger++){
-				var botFactor = botFactors[botInteger];
-				if((topFactors[topInteger]==botFactors[botInteger])&&(topFactors[topInteger]!=1)){
-					returnArray[0]/=topFactors[topInteger];
-					returnArray[1]/=botFactors[botInteger];
+		for(var top=0;top<topFactors.length;top++){
+			var topFactor = topFactors[top];
+			for(var bot=0;bot<botFactors.length;bot++){
+				var botFactor = botFactors[bot];
+				if((topFactors[top]==botFactors[bot])&&(topFactors[top]!=1)){
+					returnArray[0]/=topFactors[top];
+					returnArray[1]/=botFactors[bot];
 
-					topFactors[topInteger] =1;
-					botFactors[botInteger] =1;
+					topFactors[top] =1;
+					botFactors[bot] =1;
 				}
 			}
 		}
@@ -57,51 +57,51 @@ var math = {
 	},
 	arithMean:function(array){
 		var total=0;
-		for(arithMeanInt=0;arithMeanInt<array.length;arithMeanInt++){
-			total+=array[arithMeanInt];
+		for(var i=0;i<array.length;i++){
+			total+=array[i];
 		}
 		return total/array.length;
 	},
 	geoMean:function(array){
 		var total=1;
-		for(geoMeanInt=0;geoMeanInt<array.length;geoMeanInt++){
-			total*=array[geoMeanInt];
+		for(var i=0;i<array.length;i++){
+			total*=array[i];
 		}
-		return math.rad(total,array.length);
+		return m.rad(total,array.length);
 	},
 	geoArithMean:function(number1,number2){
 		return arithGeoMean(number1,number2)
 	},
 	// I have to use an array for this, realistically. I could get away with not, but it's not needed
 	arithGeoMean:function(number1,number2){
-		var arithBound=[math.arithMean([number1,number2])];
-		var geoBound=[math.geoMean([number1,number2])];
+		var arithBound=[m.arithMean([number1,number2])];
+		var geoBound=[m.geoMean([number1,number2])];
 		var meanInteger=0
 		while(arithBound[arithBound.length-1]!==geoBound[geoBound.length-1]){
-			arithBound[meanInteger+1]=math.arithMean([arithBound[meanInteger],geoBound[meanInteger]]);
-			geoBound[meanInteger+1]=math.geoMean([arithBound[meanInteger],geoBound[meanInteger]]);
+			arithBound[meanInteger+1]=m.arithMean([arithBound[meanInteger],geoBound[meanInteger]]);
+			geoBound[meanInteger+1]=m.geoMean([arithBound[meanInteger],geoBound[meanInteger]]);
 			meanInteger+=1;
 		}
 		return geoBound[geoBound.length-1]
 	},
 	factorial:function(number){
 		if(number%1==0){
-			return math.intFactorial(number);
+			return m.intFactorial(number);
 		}
 	},
 	intFactorial:function(number){
 		var factorialSum = 1;
-		for(factorialInteger=0;factorialInteger<number;factorialInteger++){
-			factorialSum*= number-factorialInteger;
+		for(var i=0;i<number;i++){
+			factorialSum*= number-i;
 		}
 		return factorialSum
 	},
 	synthetic:function(system,number){
 		var top=system;var mid=[];var bot=[];
 		mid[0]=0;
-		for(syntheticInteger=0;syntheticInteger<system.length;syntheticInteger++){
-			bot[syntheticInteger]=(top[syntheticInteger]+mid[syntheticInteger]);
-			mid[syntheticInteger+1]=(bot[syntheticInteger]*number);
+		for(var i=0;i<system.length;i++){
+			bot[i]=(top[i]+mid[i]);
+			mid[i+1]=(bot[i]*number);
 		}
 		var remainder=bot[system.length-1]
 		return remainder;
@@ -111,18 +111,18 @@ var math = {
 		var factored=new Array();
 		var temp;
 		if(number>=0){
-			for(factorInteger=0;factorInteger<number/2+1;factorInteger++){
-				temp=(number/factorInteger);
+			for(var i=0;i<number/2+1;i++){
+				temp=(number/i);
 				if(temp%1==0){
-					factored[factored.length]=factorInteger;
+					factored[factored.length]=i;
 				}
 			}
 		}
 		if(number<0){
-			for(factorInteger=0;factorInteger<math.abs(number);factorInteger++){
-				temp=(math.abs(number)/factorInteger);
+			for(var i=0;i<m.abs(number);i++){
+				temp=(m.abs(number)/i);
 				if(temp%1==0){
-					factored[factored.length]=-factorInteger
+					factored[factored.length]=-i;
 				}
 			}
 		}
@@ -133,10 +133,10 @@ var math = {
 	primeFactor:function(number){
 		var factored=new Array();
 		var temp;
-		for(primeFactorInteger=2;primeFactorInteger<number;primeFactorInteger++){
-			if(number%primeFactorInteger==0){
-				factored[factored.length]=primeFactorInteger;
-				number/=primeFactorInteger;
+		for(var i=2;i<number;i++){
+			if(number%i==0){
+				factored[factored.length]=i;
+				number/=i;
 			}
 		}
 		factored[factored.length]=number;
@@ -162,7 +162,7 @@ var math = {
 			return 1
 		}
 		if(exponent%1==0){
-			return math.intPow(number,exponent);
+			return m.intPow(number,exponent);
 		}
 
 		var expandedExponent = exponent; // remaking the variable so we can modify it later
@@ -170,21 +170,21 @@ var math = {
 		var aftrDecStrng = exponent.toString(); // Changing the after decimal to a string
 		var splitAfterDec = aftrDecStrng.split("."); // Spliting up the string in order to acquire the part after the decimal
 		var onlyAfterDec = splitAfterDec[1].split("");
-		for(powInt=0;powInt<onlyAfterDec.length;powInt++){
-			onlyAfterDec[powInt]=parseInt(onlyAfterDec[powInt]);
+		for(var i=0;i<onlyAfterDec.length;i++){
+			onlyAfterDec[i]=parseInt(onlyAfterDec[i]);
 		}
-		var beforeDecInit = math.intPow(number,parseInt(splitAfterDec[0]))
+		var beforeDecInit = m.intPow(number,parseInt(splitAfterDec[0]))
 		var newEnd=[];
-		for(powInt=0;powInt<onlyAfterDec.length;powInt++){
-			var newNum = math.intPow(number,onlyAfterDec[powInt])
-			for(idkInteger=0;idkInteger<(powInt+1);idkInteger++){
-				newEnd[powInt]=math.intRad(newNum,10)
-				newNum = newEnd[powInt]
+		for(var i=0;i<onlyAfterDec.length;i++){
+			var newNum = m.intPow(number,onlyAfterDec[i])
+			for(var idk=0;idk<(i+1);idk++){
+				newEnd[i]=m.intRad(newNum,10)
+				newNum = newEnd[i]
 			}
 		}
 
-		for(powInt=0;powInt<newEnd.length;powInt++){
-			beforeDecInit*=newEnd[powInt]
+		for(var i=0;i<newEnd.length;i++){
+			beforeDecInit*=newEnd[i]
 		}
 		return beforeDecInit;
 	},
@@ -194,7 +194,7 @@ var math = {
 		if(exponent==0){
 			return 1;
 		} 
-		for(powerInteger=0;powerInteger<math.abs(exponent);powerInteger++){
+		for(var i=0;i<m.abs(exponent);i++){
 			finalEnd*=number;
 		}
 		if(exponent<0){
@@ -203,7 +203,7 @@ var math = {
 		return finalEnd;		
 	},
 	// Has optional specs. You don't really need it. 
-	// I should make it math.log(number) as soon as I figure out math.log
+	// I should make it m.log(number) as soon as I figure out m.log
 
 	//sqrt:function(number,specs){
 	/*
@@ -250,9 +250,9 @@ var math = {
 			return "cannot exist";
 		}
 		if(index%1==0){
-			return math.intRad(number,index);
+			return m.intRad(number,index);
 		}
-		return math.pow(number,1/index)
+		return m.pow(number,1/index)
 	},
 	// Doesn't work with massive numbers :(
 		/* 	
@@ -271,7 +271,7 @@ var math = {
 		var initGuess = 1;
 		var inside = function (number){
 			var leftInsideIntRad = (root-1)*number;
-			var rightInsideIntRad = number1/math.intPow(number,root-1);
+			var rightInsideIntRad = number1/m.intPow(number,root-1);
 			return (leftInsideIntRad+rightInsideIntRad)/root;
 		}
 		var checker= [];
@@ -297,19 +297,19 @@ var math = {
 		}
 		// Otherwise running ln of small numbers is slow
 		if(number<1){
-			return -1*math.ln(1/number)/math.ln(base)
+			return -1*m.ln(1/number)/m.ln(base)
 		}
-		return math.ln(number)/math.ln(base);
+		return m.ln(number)/m.ln(base);
 	},
 	// It's broken
 	ln:function(number){
 		if(number<1){
-			return -1*math.logNatural(1/number)
+			return -1*m.logNatural(1/number)
 		}
-		return math.logNatural(number)
+		return m.logNatural(number)
 	},
 	logNatural:function(numberBegin){
-		// I would use math.rad(number,2), except I need a clean number at the end
+		// I would use m.rad(number,2), except I need a clean number at the end
 		var number=numberBegin;
 		var totZer=0;
 		while(number>=2){
@@ -321,12 +321,12 @@ var math = {
 		var total = 0;
 		var loops = [1,0]
 		while(!(loops[1]==loops[0])){
-			total+= (((lnInt+1)%2==0)?1:-1)*math.pow((number-1),lnInt)/lnInt
+			total+= (((lnInt+1)%2==0)?1:-1)*m.pow((number-1),lnInt)/lnInt
 			loops[lnInt%2]=total;
 			lnInt+=1;
 		}
-		for(ff=0;ff<totZer;ff++){
-			total+=math.LN2;
+		for(var ff=0;ff<totZer;ff++){
+			total+=m.LN2;
 		}
 		return total;
 	},
@@ -335,24 +335,24 @@ var math = {
 		// Conditions
 		var number  = numberDegrees%360;
 		if(number==0)	{return 0}
-		if(number==30)	{return math.intRad(1,2)/2}
-		if(number==45)	{return math.intRad(2,2)/2}
-		if(number==60)	{return math.intRad(3,2)/2}
+		if(number==30)	{return m.intRad(1,2)/2}
+		if(number==45)	{return m.intRad(2,2)/2}
+		if(number==60)	{return m.intRad(3,2)/2}
 		if(number==90)	{return 1}
-		if(number==120)	{return math.intRad(3,2)/2}
-		if(number==135)	{return math.intRad(2,2)/2}
-		if(number==150)	{return math.intRad(1,2)/2}
+		if(number==120)	{return m.intRad(3,2)/2}
+		if(number==135)	{return m.intRad(2,2)/2}
+		if(number==150)	{return m.intRad(1,2)/2}
 		if(number==180)	{return 0}
-		if(number==210)	{return -math.intRad(1,2)/2}
-		if(number==225)	{return -math.intRad(2,2)/2}
-		if(number==240)	{return -math.intRad(3,2)/2}
+		if(number==210)	{return -m.intRad(1,2)/2}
+		if(number==225)	{return -m.intRad(2,2)/2}
+		if(number==240)	{return -m.intRad(3,2)/2}
 		if(number==270)	{return -1}
-		if(number==300)	{return -math.intRad(3,2)/2}
-		if(number==315)	{return -math.intRad(2,2)/2}
-		if(number==330)	{return -math.intRad(1,2)/2}
+		if(number==300)	{return -m.intRad(3,2)/2}
+		if(number==315)	{return -m.intRad(2,2)/2}
+		if(number==330)	{return -m.intRad(1,2)/2}
 
 
-			number  = numberDegrees*math.PI/180;
+			number  = numberDegrees*m.PI/180;
 		var checker = [];checker[0]=0;checker[1]=1;checker[2]=2;
 		var looper  = [];looper[0]=0;looper[1]=1;looper[2]=2;looper[3]=3;
 		var top;
@@ -362,8 +362,8 @@ var math = {
 		var sinInt=1;
 		while(((!(checker[0]==checker[1]))&&(!(checker[1]==checker[2])))&&((!(looper[0]==looper[1])) && (!(looper[1]==looper[2])) && (!(looper[2]==looper[3])))) {
 			if(sinInt%2==1){
-				top=math.pow(number,sinInt);
-				bot=math.factorial(sinInt);
+				top=m.pow(number,sinInt);
+				bot=m.factorial(sinInt);
 				if(sinInt%4==1){
 					negative=1
 				}
@@ -379,11 +379,11 @@ var math = {
 		return checker[0]
 	},
 	sine:function(number){
-		return math.sin(number);
+		return m.sin(number);
 	},
 	cos:function(numberDegrees){
 		// Conditions
-		return math.sin(numberDegrees+90);
+		return m.sin(numberDegrees+90);
 		/*
 		var number = numberDegrees%360;
 		if(number==0)	{return 0}
@@ -396,7 +396,7 @@ var math = {
 		if(number==330)	{return -1/2}
 
 
-		var	number  = numberDegrees*math.PI/180;
+		var	number  = numberDegrees*m.PI/180;
 		var checker = [];checker[0]=0;checker[1]=1;checker[2]=2;
 		var looper  = [];looper[0]=0;looper[1]=1;looper[2]=2;looper[3]=3;
 		var top;
@@ -406,8 +406,8 @@ var math = {
 		var sinInt=0;
 		while(((!(checker[0]==checker[1]))&&(!(checker[1]==checker[2])))&&((!(looper[0]==looper[1])) && (!(looper[1]==looper[2])) && (!(looper[2]==looper[3])))) {
 			if(sinInt%2==0){
-				top=math.pow(number,sinInt);
-				bot=math.factorial(sinInt);
+				top=m.pow(number,sinInt);
+				bot=m.factorial(sinInt);
 				if(sinInt%4==0){
 					negative=1
 				}
@@ -423,48 +423,48 @@ var math = {
 		return checker[0]*/
 	},
 	calcine:function(number){
-		return math.cos(number);
+		return m.cos(number);
 	},
 	tan:function(number){
-		return math.sin(number)/math.cos(number);
+		return m.sin(number)/m.cos(number);
 	},
 	tangent:function(number){
-		return math.tan(number);
+		return m.tan(number);
 	},
 	csc:function(number){
-		return 1/math.sin(number);
+		return 1/m.sin(number);
 	},
 	cosecant:function(number){
-		return math.csc(number);
+		return m.csc(number);
 	},
 	sec:function(number){
-		return 1/math.cos(number);
+		return 1/m.cos(number);
 	},
 	secant:function(number){
-		return math.sec(number);
+		return m.sec(number);
 	},
 	cot:function(number){
-		return 1/math.tan(number);
+		return 1/m.tan(number);
 	},
 	cotangent:function(number){
-		return math.cot(number);
+		return m.cot(number);
 	},
 	factorial:function(number){
 		var factorialEnd = 1;
-		for(factorialInteger=number;factorialInteger>0;factorialInteger--){
-			factorialEnd*= factorialInteger;
+		for(var i=number;i>0;i--){
+			factorialEnd*= i;
 		}
 		return factorialEnd;
 	},
 	rrt:function(first,last){
-		var lastFactors =math.factor(last);
-		var firstFactors=math.factor(first);
+		var lastFactors =m.factor(last);
+		var firstFactors=m.factor(first);
 		var totalFactors=[];
 		
-		for(rrtFirstInteger=0;rrtFirstInteger<firstFactors.length;rrtFirstInteger++){
-			for(rrtSecndInteger=0;rrtSecndInteger<lastFactors.length;rrtSecndInteger++){
-				totalFactors[totalFactors.length]=math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
-				totalFactors[totalFactors.length]=-math.abs(lastFactors[rrtFirstInteger]/firstFactors[rrtSecndInteger]);
+		for(var i=0;i<firstFactors.length;i++){
+			for(var j=0;j<lastFactors.length;j++){
+				totalFactors[totalFactors.length]=m.abs(lastFactors[i]/firstFactors[j]);
+				totalFactors[totalFactors.length]=-m.abs(lastFactors[i]/firstFactors[j]);
 			}
 		}
 
@@ -488,13 +488,13 @@ var math = {
 		    
 	    var length = array.length-1; 
 	    
-	    for(sortInteger=0;sortInteger<array.length;sortInteger++) {
+	    for(var i=0;i<array.length;i++) {
 	        
 	        var sorted = true;
 	        
-	        for(sortJnteger=0;sortJnteger<length;sortJnteger++) {
-	            if(array[sortJnteger]>array[sortJnteger+1]) {
-	                array.splice(sortJnteger,2,array[sortJneteger+1],array[sortJnteger]);
+	        for(var j=0;j<length;j++) {
+	            if(array[j]>array[j+1]) {
+	                array.splice(j,2,array[j+1],array[j]);
 	                sorted = false;
 	            }
 	        }
@@ -515,15 +515,15 @@ var math = {
 		var length = a.length;
 		// Redefines length for end zeros, as if factoring x out of x^3+4x, since there's a zero it removes it
 		var origZeros = 0;
-		for(i=0;i<length;i++){
+		for(var i=0;i<length;i++){
 			if(a[length-1]==0){
 				origZeros++;
 				length-=1;
 				zeros[zeros.length]=0;
 			}
 		}	
-		var beginFactors = math.factor(a[0])
-		var endFactors = math.factor(a[length-1])
+		var beginFactors = m.factor(a[0])
+		var endFactors = m.factor(a[length-1])
 		// Checking the factors with synthetic division
 		var toSend
 		var tempLength
@@ -531,25 +531,42 @@ var math = {
 		// Has a problem with sending the same number in 2 different ways
 		// Eg. Sending -2/1 and -4/2
 		// Is effectively rational roots. What ever
-		for(y=0;y<=beginFactors.length;y++){
-			for(n=0;n<=endFactors.length;n++){
+		for(var y=0;y<=beginFactors.length;y++){
+			for(var n=0;n<=endFactors.length;n++){
 				toSend=endFactors[n]/beginFactors[y];
-				if(0==math.synthetic(a,toSend)){
+				if(0==m.synthetic(a,toSend)){
 					tempLength=zeros.length;
 					zeros[tempLength]=toSend;
 				};
 			};
 		}
-		for(y=0;y<beginFactors.length;y++){
-			for(n=0;n<endFactors.length;n++){
+		for(var y=0;y<beginFactors.length;y++){
+			for(var n=0;n<endFactors.length;n++){
 				toSend=-1*endFactors[n]/beginFactors[y];
-				if(0==math.synthetic(a,toSend)){
+				if(0==m.synthetic(a,toSend)){
 					tempLength=zeros.length;
 					zeros[tempLength]=toSend;
 				};
 			};
 		}
-		return zeros
+
+		zeros.sort(
+			function(a,b){
+				return a-b;
+			}
+		);
+
+		var finalZeros = [];
+		if(zeros.length>0){
+			finalZeros.push(zeros[0]);
+			for(var i=1;i<zeros.length;i++){
+				if(zeros[i]!=finalZeros[finalZeros.length-1]){
+					finalZeros.push(zeros[i]);
+				}
+			}
+		}	
+
+		return finalZeros
 		// Would be a good idea to add a repeat checker, but again
 		// What ever
 	},
