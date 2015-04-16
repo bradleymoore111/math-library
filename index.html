@@ -1,6 +1,55 @@
 <html>
+	<head>
+		<title>MATH</title>
+	</head>
 	<body>
 		<script src="math.js"></script>		
 		<script src="main.js"></script>
+		<script src="equation.js"></script>
+		<p>Create a sine function</p>
+		<script>
+			var SineIndex = function(){
+				var amplitude 		  = document.getElementById("aSine");
+				var periodManipulator = document.getElementById("pSineM");
+				var horizontalShift   = document.getElementById("hSS");
+				var verticalShift     = document.getElementById("vSS");
+				var SineReturn 		  = document.getElementById("SineReturn")
+				SineReturn.innerText  = makeSine(parseFloat(amplitude.value),
+												 parseFloat(periodManipulator.value),
+												 parseFloat(horizontalShift.value),
+												 parseFloat(verticalShift.value));
+			}
+			var getValue = function(){
+				document.getElementById("valueReturn").innerText = valueOf(parseFloat(document.getElementById("x").value));
+			}
+		</script>
+
+		<form id="SineForm">
+			<input id="aSine" type="text" style="width:30px"> sin( <input id="pSineM" type="text" style="width:30px">x - <input id="hSS" type="text" style="width:30px">) + <input id="vSS" type="text" style="width:30px">
+			<input class="button" id="SineButton1" value="Click Me!" type="button" onClick="SineIndex()"><br>
+			<a>Your compacted function is <div id="SineReturn"></div></a><br>
+
+			<a>Find value of <input id="x" type="text" style="width:30px"></a>
+			<input class="button" id="SineButton2" value="Click Me!" type="button" onClick="getValue()"><br>
+			<div id="valueReturn"></div>
+
+		</form>
+		<div id="polynomialParser" style="border-style: solid">
+			<script>
+				var polyCalc = function(){
+					document.getElementById("polyReturn").innerText = parsePolynomial(document.getElementById("polyString").value,parseFloat(document.getElementById("polyValue").value));
+				}
+			</script>
+			<form id="PolynomialForm" style="margin-left: 19px">
+				<br><a>Type in a polynomial equation<br>MUST be in the form "coefficientx^n", no spaces, for example:<br>(2x^3-1x^2+4) would be an acceptable input<br></a>
+				<input id="polyString" type="text"><br>
+				<a>Along with a value to be input</a>
+				<input id="polyValue" type="text" style="width:30px">
+				<input class="button" id="polyButton" value="Click Me!" type="button" onClick="polyCalc()"><br>
+				<div id="polyReturn"></div>
+			</form>
+		</div>
 	</body>
 </html>
+
+<!--Note to Bradley in case I forget to tell you. To delete all instances of a char from a string, str = str.deleteChar(theChar);-->
