@@ -13,7 +13,7 @@ function parsePolynomial(s,x){
 	// 2x^3-1x^2+4
 	var equation = [];
 
-	s=deleteChar(s," ");
+	s=s.replace(/\s*/,"");
 	s=s.replace(/[+]/g,"P+");
 	s=s.replace(/[-]/g,"M-");
 	console.log(s);
@@ -55,16 +55,6 @@ function parsePolynomial(s,x){
 var amplitude=0;
 var period=math.pi;
 var hShift=0;
-
-function deleteChar(string, goal) {
-	for(i = 0; i < string.length; i++) {
-		if(string.substring(i, i+1) == goal) {
-			string = string.substring(0,i) + string.substring(i + 1, string.length);
-			i--;
-		}
-	}
-	return string;
-}
 var vShift=0;
 
 function valueOf(x){
