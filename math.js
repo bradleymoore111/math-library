@@ -352,7 +352,7 @@ var m = {
 		if(number==330)	{return -m.intRad(1,2)/2}
 
 
-			number  = numberDegrees*m.PI/180;
+			number *= m.PI/180;
 		var checker = [];checker[0]=0;checker[1]=1;checker[2]=2;
 		var looper  = [];looper[0]=0;looper[1]=1;looper[2]=2;looper[3]=3;
 		var top;
