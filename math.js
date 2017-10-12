@@ -570,4 +570,41 @@ var m = {
 		// Would be a good idea to add a repeat checker, but again
 		// What ever
 	},
+	// number theory stuff
+	euclidean:function( a, b ){
+		if( b == 1 || a == 1 ){
+			return 1;
+		}
+
+		var s = a + " = ";
+
+		// assuming b is the smaller
+		var total = 0;
+
+		while( a > b ){
+			a -= b;
+			total++;
+		}
+
+		s += total + "*" + b + " + " + a;
+
+		console.log( s );
+
+		return euclidean(b, a);
+	},
+	gcd:function( a, b ){
+		if( a == 0 ){
+			return b;
+		}
+		
+		if( b == 0 ){
+			return a;
+		}
+		
+		if( b == 1 ){
+			return 1;
+		}
+			
+		return m.gcd( b, a%b );
+	}
 };
