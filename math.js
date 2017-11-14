@@ -193,16 +193,16 @@ var m = {
 		var finalEnd=1;
 		if(exponent==0){
 			return 1;
-		} 
+		}
 		for(var i=0;i<m.abs(exponent);i++){
 			finalEnd*=number;
 		}
 		if(exponent<0){
 			return (1/finalEnd);
 		}
-		return finalEnd;		
+		return finalEnd;
 	},
-	// Has optional specs. You don't really need it. 
+	// Has optional specs. You don't really need it.
 	// I should make it m.log(number) as soon as I figure out m.log
 
 	//sqrt:function(number,specs){
@@ -213,7 +213,7 @@ var m = {
 		1/2 (x_k + a/x_k)
 		That's all this does
 	*/
-	sqrt:function(number){ 
+	sqrt:function(number){
 		if(number<0){
 			return -Infinity;
 		}
@@ -255,7 +255,7 @@ var m = {
 		return m.pow(number,1/index)
 	},
 	// Doesn't work with massive numbers :(
-		/* 	
+		/*
 			A function to return the formula found on http://en.wikipedia.org/wiki/Nth_root_algorithm
 			Left is the inside left of the bracket
 			Right is the inside right of the bracket
@@ -266,7 +266,7 @@ var m = {
 			x_k = number, or the current number
 			x_k+1 = the returned number, or the next number in the series
 			A = number1, or the original number to be rooted
-		*/	
+		*/
 	intRad:function(number1,root){
 		var initGuess = 1;
 		var inside = function (number){
@@ -460,7 +460,7 @@ var m = {
 		var lastFactors =m.factor(last);
 		var firstFactors=m.factor(first);
 		var totalFactors=[];
-		
+
 		for(var i=0;i<firstFactors.length;i++){
 			for(var j=0;j<lastFactors.length;j++){
 				totalFactors[totalFactors.length]=m.abs(lastFactors[i]/firstFactors[j]);
@@ -469,44 +469,44 @@ var m = {
 		}
 
 		totalFactors = sort(totalFactors);
-	
+
 		//Deletes all duplicates
-		
+
 		var runs = 0;
-		
+
 		while(runs<totalFactors.length-2){ // Why isn't this a for loop?
 			if(totalFactors[runs]===totalFactors[runs+1]){
 				totalFactors.splice(runs,1);
 			} else {
 				runs++;
 			}
-		}		
-		
+		}
+
 		return totalFactors;
 	},
 	sort:function(array){ // Delete this, unless you have a reason not to.
-		    
-	    var length = array.length-1; 
-	    
+
+	    var length = array.length-1;
+
 	    for(var i=0;i<array.length;i++) {
-	        
+
 	        var sorted = true;
-	        
+
 	        for(var j=0;j<length;j++) {
 	            if(array[j]>array[j+1]) {
 	                array.splice(j,2,array[j+1],array[j]);
 	                sorted = false;
 	            }
 	        }
-	        
+
 	        if(sorted) {
 	            return array;
 	        }
-	        
+
 	        length--;
-	        
+
 		}
-	    
+
 	    return array;
 	},
 	solvePolynomials:function(a){
@@ -521,7 +521,7 @@ var m = {
 				length-=1;
 				zeros[zeros.length]=0;
 			}
-		}	
+		}
 		var beginFactors = m.factor(a[0])
 		var endFactors = m.factor(a[length-1])
 		// Checking the factors with synthetic division
@@ -564,7 +564,7 @@ var m = {
 					finalZeros.push(zeros[i]);
 				}
 			}
-		}	
+		}
 
 		return finalZeros
 		// Would be a good idea to add a repeat checker, but again
@@ -590,21 +590,102 @@ var m = {
 
 		console.log( s );
 
-		return euclidean(b, a);
+		return m.euclidean(b, a);
 	},
 	gcd:function( a, b ){
 		if( a == 0 ){
 			return b;
 		}
-		
+
 		if( b == 0 ){
 			return a;
 		}
-		
+
 		if( b == 1 ){
 			return 1;
 		}
-			
+
 		return m.gcd( b, a%b );
+	},
+	modpow:function(b, e, m){
+	    if( m == 1 ){
+	    	return 0;
+	    }
+
+	    var c = 1;
+
+	    for( var e_p = 0; e_p < e; e_p++ ){
+	    	c = (c*b) % m;
+	    }
+
+	    return c;
+	},
+	repeated_square:function(b,e,m){
+		var arr = [1], s = "";
+		for(var i=2;arr[arr.length-1]*2 < e; i*= 2){
+			arr[arr.length] = i;
+		}
+
+		if( arr.length <= 1 ){
+			return "";
+		}
+
+		var last = (b%m);
+		s = b + "^1 = " + (b%m) + " (mod " + m + ")";
+		var parts = [];
+		for(var i=1;i<arr.length;i++){
+			var temp = this.modpow(b,arr[i],m);
+			parts[parts.length] = last;
+			s += "\n" + b + "^" + arr[i] + " = " + last + "^2 (mod " + m + ") = " + temp;
+			last = temp;
+		}
+
+		parts[parts.length] = last;
+
+		s += "\n\n" + b + "^" + e + " = " + b + "^( ";
+
+		var needed = [], temp_e = e;
+		for(var i=arr.length-1; i >= 0; i-- ){
+			if( arr[i] <= temp_e ){
+				s += (needed.length? " + " + arr[i]:arr[i]);
+				needed[needed.length] = arr[i];
+				temp_e -= arr[i];
+			}
+		}
+
+		s += " ) = " + this.modpow(b,e,m);
+
+		return s;
+	},
+	ncr:function(n,k){
+		if( k > n/2 ){
+			k = n-k;
+		}
+
+		var final = 1;
+
+		for(var i=1;i<=k;i++){
+			final *= (n - k + i);
+			final /= i;
+		}
+
+		return final;
+
+		// return m.factorial(n) / (m.factorial(n-k) * m.factorial(k)); // alternative but VERY prone to overflow.
+	},
+	// Builds pascal's triangle basically.
+	ncr_no_overflow:function(n,k){
+		var array = [1];
+
+		for(var i=0;i<=n;i++){
+			for(var j=i;j > 0; j--){
+				if( undefined == array[j] ){
+					array[j] = 0;
+				}
+				array[j] += array[j - 1];
+			}
+		}
+
+		return array[k];
 	}
-};
+}, math = m;
