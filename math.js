@@ -422,7 +422,7 @@ var m = {
 		}
 		return checker[0]*/
 	},
-	calcine:function(number){
+	cosine:function(number){
 		return m.cos(number);
 	},
 	tan:function(number){
